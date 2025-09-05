@@ -1,0 +1,46 @@
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db { 
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  email     String   @unique
+  invoices  Invoice[] 
+  name      String
+}
+
+model File {
+  id        String @id @default(uuid())
+  url       String
+  type      String
+  invoiceId String
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Invoice {
+   user                 User @relation(fields: [userId], references: [id])
+   id                   String   @id @default(uuid())
+   service_description  String
+   invoice_number       Int
+   date DateTime        @default(now())
+   license_plate        String @unique
+   customer_name        String
+   vehicle_model        String
+   total_amount         Float
+   labor_cost           Float
+   part_name            String
+   userId               String
+   files                File[]
+   cost                 Float
+}
+
+
