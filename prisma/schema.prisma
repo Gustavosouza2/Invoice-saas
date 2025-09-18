@@ -15,13 +15,15 @@ model User {
   email     String   @unique
   invoices  Invoice[] 
   name      String
+  password  String
+  phone     String
 }
 
 model File {
   id        String @id @default(uuid())
   url       String
   type      String
-  invoiceId String
+  invoiceId String   @unique 
   invoice   Invoice @relation(fields: [invoiceId], references: [id])
   createdAt DateTime @default(now())
 }
@@ -32,6 +34,7 @@ model Invoice {
    service_description  String
    invoice_number       Int
    date DateTime        @default(now())
+   service_price        Float
    license_plate        String @unique
    customer_name        String
    vehicle_model        String
@@ -39,8 +42,8 @@ model Invoice {
    labor_cost           Float
    part_name            String
    userId               String
-   files                File[]
    cost                 Float
+   file                 File?
 }
 
 
