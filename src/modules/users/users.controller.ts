@@ -10,27 +10,26 @@ import {
 
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
+  @Post('/create-user')
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createUser(createUserDto);
   }
 
-  @Get()
+  @Get('/get-users')
   findAllUsers() {
     return this.usersService.findAllUsers();
   }
 
-  @Get(':id')
+  @Get('/get-user/:id')
   findUserById(@Param('id') id: string) {
     return this.usersService.findUserById(id);
   }
 
-  @Patch(':id')
+  @Patch('/update-user/:id')
   updateUser(
     @Param('id') id: string,
     @Body() updateUserDto: Partial<CreateUserDto>
@@ -38,7 +37,7 @@ export class UsersController {
     return this.usersService.updateUser(id, updateUserDto);
   }
 
-  @Delete(':id')
+  @Delete('/delete-user/:id')
   removeUser(@Param('id') id: string) {
     return this.usersService.removeUser(id);
   }

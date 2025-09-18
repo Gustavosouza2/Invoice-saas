@@ -2,36 +2,40 @@ import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 
 import { CreateUserDto } from './dto/create-user.dto';
-import { type User } from 'generated/prisma';
-
+import { UpdateUserDto } from './dto/update-user.dto';
+import { PrismaClient } from 'generated/prisma';
 @Injectable()
 export class UsersService {
-  private users: User[] = [];
+  private prisma = new PrismaClient();
 
-  createUser(userData: CreateUserDto) {
+  async createUser(userData: CreateUserDto) {
     const newUser = { id: randomUUID(), ...userData };
-    this.users.push(newUser);
+    await this.prisma.user.create({
+      data: newUser,
+    });
     return newUser;
   }
 
-  updateUser(id: string, userData: Partial<CreateUserDto>) {
-    const index = this.users.findIndex((i) => i.id === id);
-    if (index === -1) return null;
-    this.users[index] = { ...this.users[index], ...userData };
-    return this.users[index];
+  async updateUser(id: string, userData: Partial<UpdateUserDto>) {
+    await this.prisma.user.update({
+      where: { id },
+      data: userData,
+    });
   }
 
-  removeUser(id: string) {
-    const index = this.users.findIndex((i) => i.id === id);
-    if (index === -1) return null;
-    return this.users.splice(index, 1);
+  async removeUser(id: string) {
+    return this.prisma.user.delete({
+      where: { id },
+    });
   }
 
-  findAllUsers() {
-    return this.users;
+  async findAllUsers() {
+    return this.prisma.user.findMany();
   }
 
-  findUserById(id: string) {
-    return this.users.find((user) => user.id === id);
+  async findUserById(id: string) {
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
   }
 }
